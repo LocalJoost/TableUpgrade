@@ -1,18 +1,18 @@
 ﻿using TableUpgrade.Data.JsonResult;
 using TableUpgrade.Data.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using Azure.Data.Tables;
 
 namespace TableUpgrade.Data.Components
 {
     public class FlightCache
     {
-        private readonly CloudTable _flightCacheTable;
+        private readonly TableClient _flightCacheTable;
         private readonly string _airport;
 
-        public FlightCache(CloudTable flightCacheTable, string airport)
+        public FlightCache(TableClient flightCacheTable, string airport)
         {
             _flightCacheTable = flightCacheTable;
             _airport = airport;
@@ -24,7 +24,7 @@ namespace TableUpgrade.Data.Components
             if (cachedData != null)
             {
                 var duration = (DateTimeOffset.UtcNow - 
-                                cachedData.Timestamp.UtcDateTime).Duration();
+                                cachedData.Timestamp.Value.UtcDateTime).Duration();
                 if (duration < TimeSpan.FromSeconds(20))
                 {
                     cachedData.FlightSetJson = cachedData.FlightSetJson;
